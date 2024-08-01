@@ -1,5 +1,5 @@
 import React from "react";
-// import PropTypes from "prop-types";
+import PropTypes from "prop-types";
 import Newsitem from "./Newsitem";
 import Spinner from "./spinner";
 
@@ -11,6 +11,17 @@ const defaultProps = {};
  *
  */
 class News extends React.Component {
+
+  static defaultProps ={
+    country: 'in',
+    pageSize: 20,
+    category: 'general',
+  }
+  static propTypes = {
+    country: PropTypes.string,
+    pageSize: propTypes.number,
+    category: PropTypes.string,
+  }
   constructor(props) {
     super(props);
 
@@ -22,7 +33,7 @@ class News extends React.Component {
   }
 
   async componentDidMount() {
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=1&pageSize=${this.props.pageSize}`;
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=1&pageSize=${this.props.pageSize}`;
     this.setState({ loading: true });
     let data = await fetch(url);
     let parsedData = await data.json();
@@ -39,7 +50,7 @@ class News extends React.Component {
       Math.ceil(this.state.totalResults / this.props.pageSize)
     ) {
     } else {
-      let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=${
+      let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=${
         this.state.page + 1
       }&${this.props.pageSize}`;
       this.setState({ loading: true });
@@ -54,7 +65,7 @@ class News extends React.Component {
   };
 
   handlePrevClick = async () => {
-    let url = `https://newsapi.org/v2/top-headlines?country=in&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=${
+    let url = `https://newsapi.org/v2/top-headlines?country=${this.props.country}&category=${this.props.category}&apiKey=132e8cee3fb44daf8a21769d8c3e3b30&page=${
       this.state.page - 1
     }&${this.props.pageSize}`;
     this.setState({ loading: true });
@@ -83,6 +94,9 @@ class News extends React.Component {
                   }
                   imageUrl={element.urlToImage}
                   newsUrl={element.url}
+                  author={element.author}
+                  date={element.publishedAt}
+                  source={element.source.name}
                 />
               </div>
             );
